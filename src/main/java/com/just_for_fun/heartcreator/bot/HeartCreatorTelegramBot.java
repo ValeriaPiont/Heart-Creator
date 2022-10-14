@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -46,18 +47,26 @@ public class HeartCreatorTelegramBot extends TelegramWebhookBot {
         if (update.hasMessage()) {
             Message message = update.getMessage();
             Long chatId = message.getFrom().getId();
-            Optional<Command> command = determineCommand(message.getText());
-            if (command.isPresent()) {
-                execute(command.get().execute(chatId));
+            String input = message.getText();
+            if(Objects.nonNull(input)) {
+                Optional<Command> command = determineCommand(input);
+                if (command.isPresent()) {
+                    execute(command.get().execute(chatId));
+                } else {
+                    messageHandler.handle(update.getMessage(), this);
+                }
             } else {
-                messageHandler.handle(update.getMessage(), this);
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setChatId(chatId.toString());
+                sendMessage.setText("Something went wrong");
+                execute(sendMessage);
             }
         }
         return null;
     }
 
-    private Optional<Command> determineCommand(String command) {
-        return command.equals("/start") ? Optional.of(ctx.getBean("startCommand", StartCommand.class))
+    private Optional<Command> determineCommand(String input) {
+        return input.equals("/start") ? Optional.of(ctx.getBean("startCommand", StartCommand.class))
                 : Optional.empty();
     }
 
