@@ -3,6 +3,8 @@ package com.just_for_fun.heartcreator.backend;
 import com.just_for_fun.heartcreator.backend.exception.ParseException;
 import org.springframework.stereotype.Component;
 
+import java.util.regex.Pattern;
+
 @Component
 public class HeartCreator {
 
@@ -14,7 +16,7 @@ public class HeartCreator {
     public String getHeart(String input) throws ParseException {
         String[] codes = input.trim().split(SPLIT_SIGN);
         if (codes.length < 2) {
-            throw new ParseException("Can't parse input string");
+            throw new ParseException("Can't parse input string.");
         } else {
             return createHeart(codes[0], codes[1]);
         }

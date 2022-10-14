@@ -25,7 +25,7 @@ public class MessageHandler {
             String heartString = heartCreator.getHeart(message.getText());
             sendMessage.setText(heartString);
         } catch (ParseException e) {
-            sendMessage.setText("I don't get you. Format: emoji1-emoji2");
+            sendMessage.setText(e.getMessage() + " Format: emoji1-emoji2");
         }
 
         try {
